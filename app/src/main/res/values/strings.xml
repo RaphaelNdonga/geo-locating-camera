@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Geo Locating Camera</string>
+    <string name="take_a_photo">Take a photo</string>
+    <string name="camera_not_found">Camera not found</string>
 </resources>
