@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.location.Geocoder
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -19,6 +20,7 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import com.example.android.geolocatingcamera.databinding.ActivityMainBinding
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.snackbar.Snackbar
 import java.io.File
@@ -33,18 +35,21 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
 
+    private var geoCoder:Geocoder? = null
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        geoCoder = Geocoder(this)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         binding.button.setOnClickListener {
-            if (fusedLocationProviderClient != null) {
+            if (fusedLocationProviderClient != null && geoCoder !=null) {
                 getLastLocation()
             } else {
+                Log.i("MainActivity","Null here Button click listener")
                 Toast.makeText(
                     this,
                     getString(R.string.location_internet_request),
@@ -108,9 +113,14 @@ class MainActivity : AppCompatActivity() {
     private fun setText() {
         //The only way we get here is if the location value is not equal to null
         val location = viewModel.location.value!!
-        val text =
-            "The latitude is ${location.latitude} and the longitude is ${location.longitude}"
-        binding.textView.text = text
+        val addresses = geoCoder?.getFromLocation(location.latitude,location.longitude,1)
+
+        addresses?.let {
+            val address = it[0].getAddressLine(0)?:""
+
+            val text = "Taken from $address"
+            binding.textView.text = text
+        }
     }
 
     private fun setPic() {
@@ -118,6 +128,13 @@ class MainActivity : AppCompatActivity() {
             setImageBitmap(viewModel.getCameraPhotoBitmap(height, width))
         }
     }
+
+    /**
+     * There are a few reasons why getLastLocation() below has to be in the main activity and not
+     * in the view model
+     * 1. It contains a bunch of permissions that are convenient to ask for from the main activity
+     * 2. It calls takePictureIntent.
+     */
 
     private fun getLastLocation() {
         if (ActivityCompat.checkSelfPermission(
@@ -134,6 +151,7 @@ class MainActivity : AppCompatActivity() {
         }
         fusedLocationProviderClient?.lastLocation?.addOnSuccessListener { location ->
             if (location == null) {
+                Log.i("MainActivity","Null addOnSuccessListener")
                 Toast.makeText(this, R.string.location_internet_request, Toast.LENGTH_LONG).show()
             } else {
                 viewModel.setLocation(location)
