@@ -57,12 +57,6 @@ class MainActivity : AppCompatActivity() {
             this,
             MainViewModelFactory(application)
         ).get(MainViewModel::class.java)
-
-
-        viewModel.location.observe(this, {
-            val text = "The latitude is ${it.latitude} and the longitude is ${it.longitude}"
-            binding.textView.text = text
-        })
     }
 
     override fun onRequestPermissionsResult(
@@ -107,7 +101,16 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             setPic()
+            setText()
         }
+    }
+
+    private fun setText() {
+        //The only way we get here is if the location value is not equal to null
+        val location = viewModel.location.value!!
+        val text =
+            "The latitude is ${location.latitude} and the longitude is ${location.longitude}"
+        binding.textView.text = text
     }
 
     private fun setPic() {
@@ -129,10 +132,10 @@ class MainActivity : AppCompatActivity() {
             )
             return
         }
-        fusedLocationProviderClient?.lastLocation?.addOnSuccessListener { location->
-            if(location == null){
-                Toast.makeText(this,R.string.location_internet_request,Toast.LENGTH_LONG).show()
-            }else{
+        fusedLocationProviderClient?.lastLocation?.addOnSuccessListener { location ->
+            if (location == null) {
+                Toast.makeText(this, R.string.location_internet_request, Toast.LENGTH_LONG).show()
+            } else {
                 viewModel.setLocation(location)
                 //only after we have successfully obtained the location can the picture be taken
                 takePictureIntent()
