@@ -5,8 +5,10 @@ import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.location.Geocoder
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
@@ -17,6 +19,7 @@ import com.example.android.geolocatingcamera.databinding.ActivityMainBinding
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import java.io.IOException
+import java.lang.NullPointerException
 import java.util.*
 
 const val REQUEST_IMAGE_CAPTURE = 1
@@ -26,6 +29,11 @@ const val REQUEST_CHECK_SETTINGS = 3
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
+    private lateinit var locationCallback: LocationCallback
+    private val locationRequest = LocationRequest.create().apply {
+        interval = 10000
+        priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+    }
 
     private var geoCoder: Geocoder? = null
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
@@ -36,33 +44,62 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        viewModel = ViewModelProvider(
+            this,
+            MainViewModelFactory(application)
+        ).get(MainViewModel::class.java)
+
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+
+                Log.i("MainActivity", "The call back has been called")
+
+                val locationList = locationResult.locations
+
+                var bestLocation: Location? = null
+                locationList.forEach {
+                    if (bestLocation == null || it.accuracy > bestLocation!!.accuracy) {
+                        bestLocation = it
+                    }
+                }
+                bestLocation?.let { viewModel.setLocation(it) }
+            }
+        }
+
         binding.button.setOnClickListener {
-            val builder = LocationSettingsRequest.Builder()
+            //Check the settings whenever the button is clicked. This is intended behaviour
+
+            val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
             val client = LocationServices.getSettingsClient(this)
             val task = client.checkLocationSettings(builder.build())
 
             task.addOnSuccessListener {
                 //only when location has been connected successfully are these initialized
-                geoCoder = Geocoder(this)
-                fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-                getLastLocation()
+                if (geoCoder == null) {
+                    geoCoder = Geocoder(this)
+                }
+
+                if (fusedLocationProviderClient == null) {
+                    fusedLocationProviderClient =
+                        LocationServices.getFusedLocationProviderClient(this)
+                }
+                startLocationUpdates()
             }
 
             task.addOnFailureListener { exception ->
                 if (exception is ResolvableApiException) {
                     try {
-                        exception.startResolutionForResult(this@MainActivity, REQUEST_CHECK_SETTINGS)
+                        exception.startResolutionForResult(
+                            this@MainActivity,
+                            REQUEST_CHECK_SETTINGS
+                        )
                     } catch (ex: IntentSender.SendIntentException) {
                         //Ignored
                     }
                 }
             }
         }
-
-        viewModel = ViewModelProvider(
-            this,
-            MainViewModelFactory(application)
-        ).get(MainViewModel::class.java)
     }
 
     override fun onRequestPermissionsResult(
@@ -75,7 +112,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Location permission is required", Toast.LENGTH_LONG).show()
         }
         if (requestCode == REQUEST_LOCATION_PERMISSION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            getLastLocation()
+            startLocationUpdates()
         }
 
     }
@@ -111,9 +148,41 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_LOCATION_PERMISSION
+            )
+            return
+        }
+        fusedLocationProviderClient?.requestLocationUpdates(
+            locationRequest, locationCallback,
+            Looper.getMainLooper()
+        )
+        try {
+            val location = viewModel.location.value!!
+            geoCoder?.getFromLocation(location.latitude, location.longitude, 1)
+            takePictureIntent()
+
+        } catch (ex: IOException) {
+            //The geo coder is null
+            Toast.makeText(this, R.string.internet_request, Toast.LENGTH_LONG).show()
+        }catch (ex:NullPointerException){
+            // The location has not been set
+            Toast.makeText(this, R.string.internet_request, Toast.LENGTH_LONG).show()
+
+        }
+    }
+
     private fun setText() {
-        //The only way we get here is if the location value is not equal to null
+
         val location = viewModel.location.value!!
+
         val addresses = geoCoder?.getFromLocation(location.latitude, location.longitude, 1)
 
         addresses?.let {
@@ -127,39 +196,6 @@ class MainActivity : AppCompatActivity() {
     private fun setPic() {
         binding.imageView.apply {
             setImageBitmap(viewModel.getCameraPhotoBitmap(height, width))
-        }
-    }
-
-    /**
-     * There are a few reasons why getLastLocation() below has to be in the main activity and not
-     * in the view model
-     * 1. It contains a bunch of permissions that are convenient to ask for from the main activity
-     * 2. It calls takePictureIntent.
-     */
-
-    private fun getLastLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                REQUEST_LOCATION_PERMISSION
-            )
-            return
-        }
-        fusedLocationProviderClient?.lastLocation?.addOnSuccessListener { location ->
-            if (location == null) {
-                Log.i("MainActivity","Null addOnSuccessListener")
-                Toast.makeText(this, R.string.internet_request, Toast.LENGTH_LONG).show()
-            } else {
-                viewModel.setLocation(location)
-                //only after we have successfully obtained the location can the picture be taken
-                takePictureIntent()
-            }
-
         }
     }
 }
