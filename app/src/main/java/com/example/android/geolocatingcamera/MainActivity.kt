@@ -29,21 +29,11 @@ const val REQUEST_CHECK_SETTINGS = 3
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
-    private lateinit var locationCallback: LocationCallback
-    private val locationRequest = LocationRequest.create().apply {
-        interval = 10000
-        priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
-    }
-
-    private var geoCoder: Geocoder? = null
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        geoCoder = Geocoder(this)
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         setContentView(binding.root)
 
@@ -52,27 +42,12 @@ class MainActivity : AppCompatActivity() {
             MainViewModelFactory(application)
         ).get(MainViewModel::class.java)
 
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                super.onLocationResult(locationResult)
-
-                Log.i("MainActivity", "The call back has been called")
-
-                val locationList = locationResult.locations
-
-                var bestLocation: Location? = null
-                locationList.forEach {
-                    if (bestLocation == null || it.accuracy > bestLocation!!.accuracy) {
-                        bestLocation = it
-                    }
-                }
-                bestLocation?.let { viewModel.setLocation(it) }
-            }
-        }
+        viewModel.initializeGeocoder()
 
         viewModel.location.observe(this, { location ->
             try {
                 stopLoading()
+                val geoCoder = viewModel.getGeocoder()
                 val addresses = geoCoder?.getFromLocation(location.latitude, location.longitude, 1)
 
                 addresses?.let {
@@ -107,6 +82,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         startLoading()
+        val locationRequest = viewModel.getLocationRequest()
         val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
         val client = LocationServices.getSettingsClient(this)
         val task = client.checkLocationSettings(builder.build())
@@ -186,6 +162,14 @@ class MainActivity : AppCompatActivity() {
             )
             return
         }
+        /**
+         * Because we have to ask for permission, the fusedLocationProviderClient, locationRequest and
+         * locationCallback have to be in the main activity
+         */
+        val locationCallback = viewModel.getLocationCallback()
+        val locationRequest = viewModel.getLocationRequest()
+        val fusedLocationProviderClient = viewModel.getFusedLocationProviderClient()
+
         fusedLocationProviderClient.requestLocationUpdates(
             locationRequest, locationCallback,
             Looper.getMainLooper()
