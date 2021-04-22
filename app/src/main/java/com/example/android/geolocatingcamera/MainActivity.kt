@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
@@ -19,7 +20,6 @@ import com.example.android.geolocatingcamera.databinding.ActivityMainBinding
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import java.io.IOException
-import java.lang.NullPointerException
 import java.util.*
 
 const val REQUEST_IMAGE_CAPTURE = 1
@@ -72,12 +72,13 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.location.observe(this, { location ->
             try {
+                stopLoading()
                 val addresses = geoCoder?.getFromLocation(location.latitude, location.longitude, 1)
 
                 addresses?.let {
                     val address = it[0].getAddressLine(0) ?: ""
 
-                    val text = "Taken from $address"
+                    val text = "Location: $address"
                     binding.textView.text = text
                 }
             } catch (ex: IOException) {
@@ -105,8 +106,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        //Check the settings whenever the button is clicked. This is intended behaviour
-
+        startLoading()
         val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
         val client = LocationServices.getSettingsClient(this)
         val task = client.checkLocationSettings(builder.build())
@@ -197,4 +197,20 @@ class MainActivity : AppCompatActivity() {
             setImageBitmap(viewModel.getCameraPhotoBitmap(height, width))
         }
     }
+
+    private fun startLoading() {
+        binding.textView.visibility = View.GONE
+        binding.button.visibility = View.GONE
+        binding.imageView.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+        binding.loadingTxt.visibility = View.VISIBLE
+    }
+    private fun stopLoading() {
+        binding.textView.visibility = View.VISIBLE
+        binding.button.visibility = View.VISIBLE
+        binding.imageView.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.GONE
+        binding.loadingTxt.visibility = View.GONE
+    }
+
 }
