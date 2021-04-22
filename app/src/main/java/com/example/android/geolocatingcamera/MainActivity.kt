@@ -36,12 +36,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private var geoCoder: Geocoder? = null
-    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        geoCoder = Geocoder(this)
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
         setContentView(binding.root)
 
         viewModel = ViewModelProvider(
@@ -67,36 +70,60 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        binding.button.setOnClickListener {
-            //Check the settings whenever the button is clicked. This is intended behaviour
+        viewModel.location.observe(this, { location ->
+            try {
+                val addresses = geoCoder?.getFromLocation(location.latitude, location.longitude, 1)
 
-            val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
-            val client = LocationServices.getSettingsClient(this)
-            val task = client.checkLocationSettings(builder.build())
+                addresses?.let {
+                    val address = it[0].getAddressLine(0) ?: ""
 
-            task.addOnSuccessListener {
-                //only when location has been connected successfully are these initialized
-                if (geoCoder == null) {
-                    geoCoder = Geocoder(this)
+                    val text = "Taken from $address"
+                    binding.textView.text = text
                 }
-
-                if (fusedLocationProviderClient == null) {
-                    fusedLocationProviderClient =
-                        LocationServices.getFusedLocationProviderClient(this)
-                }
-                startLocationUpdates()
+            } catch (ex: IOException) {
+                Toast.makeText(
+                    this,
+                    "The geocoder has not been initialized properly. Please check your internet connection",
+                    Toast.LENGTH_LONG
+                ).show()
+                binding.textView.text = ""
             }
+        })
 
-            task.addOnFailureListener { exception ->
-                if (exception is ResolvableApiException) {
-                    try {
-                        exception.startResolutionForResult(
-                            this@MainActivity,
-                            REQUEST_CHECK_SETTINGS
-                        )
-                    } catch (ex: IntentSender.SendIntentException) {
-                        //Ignored
-                    }
+        binding.button.setOnClickListener {
+            if (!binding.textView.text.isNullOrEmpty()) {
+                takePictureIntent()
+            } else {
+                Toast.makeText(
+                    this,
+                    "The location needs to be detected before you can take a photo",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        //Check the settings whenever the button is clicked. This is intended behaviour
+
+        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
+        val client = LocationServices.getSettingsClient(this)
+        val task = client.checkLocationSettings(builder.build())
+
+        task.addOnSuccessListener {
+            startLocationUpdates()
+        }
+
+        task.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException) {
+                try {
+                    exception.startResolutionForResult(
+                        this@MainActivity,
+                        REQUEST_CHECK_SETTINGS
+                    )
+                } catch (ex: IntentSender.SendIntentException) {
+                    //Ignored
                 }
             }
         }
@@ -144,7 +171,6 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             setPic()
-            setText()
         }
     }
 
@@ -160,37 +186,10 @@ class MainActivity : AppCompatActivity() {
             )
             return
         }
-        fusedLocationProviderClient?.requestLocationUpdates(
+        fusedLocationProviderClient.requestLocationUpdates(
             locationRequest, locationCallback,
             Looper.getMainLooper()
         )
-        try {
-            val location = viewModel.location.value!!
-            geoCoder?.getFromLocation(location.latitude, location.longitude, 1)
-            takePictureIntent()
-
-        } catch (ex: IOException) {
-            //The geo coder is null
-            Toast.makeText(this, R.string.internet_request, Toast.LENGTH_LONG).show()
-        }catch (ex:NullPointerException){
-            // The location has not been set
-            Toast.makeText(this, R.string.internet_request, Toast.LENGTH_LONG).show()
-
-        }
-    }
-
-    private fun setText() {
-
-        val location = viewModel.location.value!!
-
-        val addresses = geoCoder?.getFromLocation(location.latitude, location.longitude, 1)
-
-        addresses?.let {
-            val address = it[0].getAddressLine(0) ?: ""
-
-            val text = "Taken from $address"
-            binding.textView.text = text
-        }
     }
 
     private fun setPic() {
