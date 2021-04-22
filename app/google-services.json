@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "252442963861",
+    "project_id": "the-geo-locating-camera",
+    "storage_bucket": "the-geo-locating-camera.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:252442963861:android:43d546fe25a6c838d9d09c",
+        "android_client_info": {
+          "package_name": "com.example.android.geolocatingcamera"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "252442963861-obqimio0ui4qcu7t6ftnh692jvv89fjh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHX8kqCKTMMA8rNWEMGWVXdXir7utu2gM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "252442963861-obqimio0ui4qcu7t6ftnh692jvv89fjh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
