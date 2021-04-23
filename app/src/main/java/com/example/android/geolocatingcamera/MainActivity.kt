@@ -185,15 +185,14 @@ class MainActivity : AppCompatActivity() {
             photoFile = File(it)
         }
 
-        photoFile?.let {
+        photoFile?.let { file ->
             val photoUri =
                 FileProvider.getUriForFile(
                     this,
                     "com.example.android.fileprovider",
-                    it
+                    file
                 )
-            val imagesRef = viewModel.getImagesRef().child(currentPhotoPath!!
-            )
+            val imagesRef = viewModel.getImagesRef().child(file.name)
 
             startLoading()
             binding.loadingTxt.text = "Uploading Image..."
