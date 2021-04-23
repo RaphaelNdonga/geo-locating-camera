@@ -12,11 +12,15 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.location.*
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
 class MainViewModel(private val app: Application) : AndroidViewModel(app) {
+    private val firebaseStorage = Firebase.storage
+    private val imagesRef = firebaseStorage.reference.child("images")
     private var currentPhotoPath: String? = null
 
     private val _location = MutableLiveData<Location>()
@@ -100,5 +104,7 @@ class MainViewModel(private val app: Application) : AndroidViewModel(app) {
 
     fun getFusedLocationProviderClient() = fusedLocationProviderClient
     fun getGeocoder() = geoCoder
+    fun getImagesRef() = imagesRef
+    fun getCurrentPhotoPath() = currentPhotoPath
 
 }
