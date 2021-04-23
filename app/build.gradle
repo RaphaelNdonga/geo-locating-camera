@@ -50,4 +50,6 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:18.0.0"
     //firebase bom helps to manage firebase versions
     implementation platform('com.google.firebase:firebase-bom:27.1.0')
+    //firebase cloud storage dependency
+    implementation 'com.google.firebase:firebase-storage-ktx'
 }
