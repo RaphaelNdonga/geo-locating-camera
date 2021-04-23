@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.android.geolocatingcamera.databinding.ActivityMainBinding
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
+import java.io.File
 import java.io.IOException
 import java.util.*
 
@@ -177,8 +178,41 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setPic() {
-        binding.imageView.apply {
-            setImageBitmap(viewModel.getCameraPhotoBitmap(height, width))
+        val currentPhotoPath = viewModel.getCurrentPhotoPath()
+        var photoFile: File? = null
+
+        currentPhotoPath?.let {
+            photoFile = File(it)
+        }
+
+        photoFile?.let {
+            val photoUri =
+                FileProvider.getUriForFile(
+                    this,
+                    "com.example.android.fileprovider",
+                    it
+                )
+            val imagesRef = viewModel.getImagesRef().child(currentPhotoPath!!
+            )
+
+            startLoading()
+            binding.loadingTxt.text = "Uploading Image..."
+
+            val task = imagesRef.putFile(photoUri)
+
+            task.addOnFailureListener { exception->
+                Log.i("MainActivity", "$exception")
+                Toast.makeText(this, "Upload failed. Please try again", Toast.LENGTH_LONG)
+                    .show()
+                stopLoading()
+            }.addOnSuccessListener {
+                binding.imageView.apply {
+                    setImageBitmap(viewModel.getCameraPhotoBitmap(height, width))
+                }
+                Toast.makeText(this, "Uploaded successfully", Toast.LENGTH_LONG)
+                    .show()
+                stopLoading()
+            }
         }
     }
 
@@ -189,6 +223,7 @@ class MainActivity : AppCompatActivity() {
         binding.progressBar.visibility = View.VISIBLE
         binding.loadingTxt.visibility = View.VISIBLE
     }
+
     private fun stopLoading() {
         binding.textView.visibility = View.VISIBLE
         binding.button.visibility = View.VISIBLE
