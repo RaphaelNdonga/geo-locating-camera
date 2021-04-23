@@ -194,8 +194,7 @@ class MainActivity : AppCompatActivity() {
                 )
             val imagesRef = viewModel.getImagesRef().child(file.name)
 
-            startLoading()
-            binding.loadingTxt.text = "Uploading Image..."
+            startLoadingImage()
 
             val task = imagesRef.putFile(photoUri)
 
@@ -203,14 +202,14 @@ class MainActivity : AppCompatActivity() {
                 Log.i("MainActivity", "$exception")
                 Toast.makeText(this, "Upload failed. Please try again", Toast.LENGTH_LONG)
                     .show()
-                stopLoading()
+                stopLoadingImage()
             }.addOnSuccessListener {
                 binding.imageView.apply {
                     setImageBitmap(viewModel.getCameraPhotoBitmap(height, width))
                 }
                 Toast.makeText(this, "Uploaded successfully", Toast.LENGTH_LONG)
                     .show()
-                stopLoading()
+                stopLoadingImage()
             }
         }
     }
@@ -229,6 +228,15 @@ class MainActivity : AppCompatActivity() {
         binding.imageView.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
         binding.loadingTxt.visibility = View.GONE
+    }
+
+    private fun startLoadingImage(){
+        binding.imageProgressBar.visibility = View.VISIBLE
+        binding.button.isClickable = false
+    }
+    private fun stopLoadingImage(){
+        binding.imageProgressBar.visibility = View.GONE
+        binding.button.isClickable = true
     }
 
 }
