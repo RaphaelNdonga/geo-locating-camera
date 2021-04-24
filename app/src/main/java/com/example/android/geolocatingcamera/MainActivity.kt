@@ -83,6 +83,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        if(viewModel.location.value != null){
+            return
+        }
         startLoading()
         val locationRequest = viewModel.getLocationRequest()
         val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
