@@ -76,6 +76,7 @@ class MainActivity : AppCompatActivity() {
                     "The location needs to be detected before you can take a photo",
                     Toast.LENGTH_LONG
                 ).show()
+                startLocationUpdates()
             }
         }
     }
