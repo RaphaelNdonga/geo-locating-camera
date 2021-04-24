@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity() {
                     binding.textView.text = text
                 }
             } catch (ex: IOException) {
+                stopLoadingImage()
                 Toast.makeText(
                     this,
                     "The geocoder has not been initialized properly. Please check your internet connection",
