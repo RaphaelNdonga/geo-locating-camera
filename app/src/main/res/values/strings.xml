@@ -1,7 +1,9 @@
 <resources>
-    <string name="app_name">Geo Locating Camera</string>
+    <string name="app_name">The Geo Locating Camera</string>
     <string name="take_a_photo">Take a photo</string>
     <string name="camera_not_found">Camera not found</string>
     <string name="internet_request">Please check your internet connection and try again</string>
     <string name="locating_txt">Locating you...</string>
+    <string name="email_hint">Enter email address</string>
+    <string name="password_hint">Enter password</string>
 </resources>
