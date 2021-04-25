@@ -6,7 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.android.geolocatingcamera.R
+import androidx.navigation.fragment.findNavController
+import com.example.android.geolocatingcamera.UserType
 import com.example.android.geolocatingcamera.databinding.LoginFragmentBinding
 
 class LoginFragment : Fragment() {
@@ -14,7 +15,8 @@ class LoginFragment : Fragment() {
     companion object {
         fun newInstance() = LoginFragment()
     }
-    private lateinit var loginFragmentBinding: LoginFragmentBinding
+
+    private lateinit var binding: LoginFragmentBinding
 
     private lateinit var viewModel: LoginViewModel
 
@@ -22,8 +24,28 @@ class LoginFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        loginFragmentBinding = LoginFragmentBinding.inflate(layoutInflater)
-        return loginFragmentBinding.root
+        binding = LoginFragmentBinding.inflate(layoutInflater)
+
+        val adminSignUp = binding.adminSignUpBtn
+        val regularSignUp = binding.regularSignUpBtn
+
+        adminSignUp.setOnClickListener {
+            findNavController().navigate(
+                LoginFragmentDirections.actionLoginFragmentToSignUpFragment(
+                    UserType.ADMIN
+                )
+            )
+        }
+
+        regularSignUp.setOnClickListener {
+            findNavController().navigate(
+                LoginFragmentDirections.actionLoginFragmentToSignUpFragment(
+                    UserType.REGULAR
+                )
+            )
+        }
+
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
