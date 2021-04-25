@@ -25,6 +25,7 @@
         app:layout_constraintTop_toBottomOf="@id/sign_up_heading"/>
 
     <EditText
+        android:inputType="textEmailAddress"
         android:id="@+id/sign_up_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,6 +34,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sign_up_user_name"/>
     <EditText
+        android:inputType="textPassword"
         android:id="@+id/sign_up_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
