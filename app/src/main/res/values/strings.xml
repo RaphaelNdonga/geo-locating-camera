@@ -6,7 +6,7 @@
     <string name="locating_txt">Locating you...</string>
     <string name="email_hint">Enter email address</string>
     <string name="password_hint">Enter password</string>
-    <string name="user_name_hint">Enter user name</string>
+    <string name="department_hint">Enter department name</string>
     <string name="adminHeading">Sign up for an admin account</string>
     <string name="regularHeading">Sign up for a regular account</string>
 </resources>

@@ -15,10 +15,10 @@
         app:layout_constraintTop_toTopOf="parent"
         style="@style/TextAppearance.AppCompat.Headline"/>
     <EditText
-        android:id="@+id/sign_up_user_name"
+        android:id="@+id/sign_up_department_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/user_name_hint"
+        android:hint="@string/department_hint"
         android:layout_margin="@dimen/edit_txt_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,7 +32,7 @@
         android:hint="@string/email_hint"
         android:layout_margin="@dimen/edit_txt_margin"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sign_up_user_name"/>
+        app:layout_constraintTop_toBottomOf="@id/sign_up_department_id"/>
     <EditText
         android:inputType="textPassword"
         android:id="@+id/sign_up_password"
