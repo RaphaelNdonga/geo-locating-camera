@@ -9,5 +9,18 @@
         android:id="@+id/loginFragment"
         android:name="com.example.android.geolocatingcamera.login.LoginFragment"
         android:label="login_fragment"
-        tools:layout="@layout/login_fragment" />
+        tools:layout="@layout/login_fragment" >
+        <action
+            android:id="@+id/action_loginFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.example.android.geolocatingcamera.signup.SignUpFragment"
+        android:label="sign_up_fragment"
+        tools:layout="@layout/sign_up_fragment" >
+        <argument
+            android:name="userType"
+            app:argType="com.example.android.geolocatingcamera.UserType" />
+    </fragment>
 </navigation>
