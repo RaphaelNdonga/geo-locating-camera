@@ -1,24 +1,21 @@
 package com.example.android.geolocatingcamera.signup
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.android.geolocatingcamera.R
 import com.example.android.geolocatingcamera.UserType
 import com.example.android.geolocatingcamera.databinding.SignUpFragmentBinding
+import com.example.android.geolocatingcamera.util.EventObserver
 import com.example.android.geolocatingcamera.util.containsSpecialCharacters
 import com.example.android.geolocatingcamera.util.containsWhiteSpace
 import com.example.android.geolocatingcamera.util.isValidEmail
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 
 class SignUpFragment : Fragment() {
 
@@ -51,11 +48,11 @@ class SignUpFragment : Fragment() {
             }
         }
 
-        viewModel.snackBarText.observe(viewLifecycleOwner, {
+        viewModel.snackBarText.observe(viewLifecycleOwner, EventObserver {
             Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
         })
 
-        viewModel.loginNavigator.observe(viewLifecycleOwner, {
+        viewModel.loginNavigator.observe(viewLifecycleOwner, EventObserver {
             findNavController().navigateUp()
         })
         binding.signUpBtn.setOnClickListener {
