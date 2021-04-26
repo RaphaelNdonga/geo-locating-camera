@@ -59,6 +59,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage-ktx'
     //firebase authentication dependency
     implementation 'com.google.firebase:firebase-auth-ktx'
+    //firebase cloud functions dependency
+    implementation 'com.google.firebase:firebase-functions'
 
     //navigation dependency
     // Kotlin
