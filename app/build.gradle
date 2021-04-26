@@ -16,6 +16,7 @@ android {
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -60,11 +61,13 @@ dependencies {
     //firebase authentication dependency
     implementation 'com.google.firebase:firebase-auth-ktx'
     //firebase cloud functions dependency
-    implementation 'com.google.firebase:firebase-functions'
+    implementation 'com.google.firebase:firebase-functions-ktx'
 
     //navigation dependency
     // Kotlin
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
+    //multidex dependency
+    implementation 'androidx.multidex:multidex:2.0.1'
 }
