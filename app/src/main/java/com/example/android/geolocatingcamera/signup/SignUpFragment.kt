@@ -1,5 +1,7 @@
 package com.example.android.geolocatingcamera.signup
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,9 +14,9 @@ import com.example.android.geolocatingcamera.R
 import com.example.android.geolocatingcamera.UserType
 import com.example.android.geolocatingcamera.databinding.SignUpFragmentBinding
 import com.example.android.geolocatingcamera.util.EventObserver
-import com.example.android.geolocatingcamera.util.containsSpecialCharacters
-import com.example.android.geolocatingcamera.util.containsWhiteSpace
+import com.example.android.geolocatingcamera.util.isValidMessagingTopic
 import com.example.android.geolocatingcamera.util.isValidEmail
+import com.example.android.geolocatingcamera.util.sharedPrefFile
 import com.google.android.material.snackbar.Snackbar
 
 class SignUpFragment : Fragment() {
@@ -26,7 +28,6 @@ class SignUpFragment : Fragment() {
     private lateinit var viewModel: SignUpViewModel
     private lateinit var binding: SignUpFragmentBinding
     private val arguments by navArgs<SignUpFragmentArgs>()
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -63,23 +64,15 @@ class SignUpFragment : Fragment() {
             if (departmentId.isEmpty() || emailAddress.isEmpty() || password.isEmpty()) {
                 Snackbar.make(
                     requireView(),
-                    "Please fill in all the blanks",
+                    getString(R.string.fill_blanks),
                     Snackbar.LENGTH_LONG
                 ).show()
                 return@setOnClickListener
             }
-            if (departmentId.containsWhiteSpace()) {
+            if (departmentId.isValidMessagingTopic()) {
                 Snackbar.make(
                     requireView(),
-                    "The department id cannot contain spaces",
-                    Snackbar.LENGTH_LONG
-                ).show()
-                return@setOnClickListener
-            }
-            if (departmentId.containsSpecialCharacters()) {
-                Snackbar.make(
-                    requireView(),
-                    "The department id cannot contain special characters or spaces",
+                    getString(R.string.no_special_white_space),
                     Snackbar.LENGTH_LONG
                 ).show()
                 return@setOnClickListener
@@ -87,7 +80,7 @@ class SignUpFragment : Fragment() {
             if (!emailAddress.isValidEmail()) {
                 Snackbar.make(
                     requireView(),
-                    "Please enter a valid email address",
+                    getString(R.string.valid_email_request),
                     Snackbar.LENGTH_LONG
                 ).show()
                 return@setOnClickListener
@@ -95,7 +88,7 @@ class SignUpFragment : Fragment() {
             if (password.length < 8) {
                 Snackbar.make(
                     requireView(),
-                    "The password has to be 8 characters or more",
+                    getString(R.string.password_requirement),
                     Snackbar.LENGTH_LONG
                 ).show()
                 return@setOnClickListener

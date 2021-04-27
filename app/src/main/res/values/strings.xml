@@ -9,4 +9,8 @@
     <string name="department_hint">Enter department id</string>
     <string name="adminHeading">Sign up for an admin account</string>
     <string name="regularHeading">Sign up for a regular account</string>
+    <string name="fill_blanks">Please fill in all the blanks</string>
+    <string name="no_special_white_space">The department id cannot contain special characters or spaces</string>
+    <string name="valid_email_request">Please enter a valid email address</string>
+    <string name="password_requirement">The password has to be 8 characters or more</string>
 </resources>
