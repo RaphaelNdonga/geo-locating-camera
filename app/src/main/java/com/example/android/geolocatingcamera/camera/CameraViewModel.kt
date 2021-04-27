@@ -1,16 +1,16 @@
-package com.example.android.geolocatingcamera
+package com.example.android.geolocatingcamera.camera
 
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Geocoder
 import android.location.Location
-import android.location.LocationProvider
 import android.os.Environment
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.google.android.gms.location.*
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -18,7 +18,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainViewModel(private val app: Application) : AndroidViewModel(app) {
+class CameraViewModel(private val app:Application): AndroidViewModel(app) {
     private val firebaseStorage = Firebase.storage
     private val imagesRef = firebaseStorage.reference.child("images")
     private var currentPhotoPath: String? = null
@@ -29,7 +29,7 @@ class MainViewModel(private val app: Application) : AndroidViewModel(app) {
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             super.onLocationResult(locationResult)
-            Log.i("MainActivity", "The call back has been called")
+            Log.i("CameraViewModel", "The call back has been called")
 
             val locationList = locationResult.locations
 
@@ -64,8 +64,8 @@ class MainViewModel(private val app: Application) : AndroidViewModel(app) {
     fun getCameraPhotoBitmap(imageViewHeight: Int, imageViewWidth: Int): Bitmap {
         //We don't need to null check currentPhotoPath because it will have already been set.
 
-        Log.i("MainActivity", "imageViewHeight is $imageViewHeight")
-        Log.i("MainActivity", "imageViewWidth is $imageViewWidth")
+        Log.i("CameraViewModel", "imageViewHeight is $imageViewHeight")
+        Log.i("CameraViewModel", "imageViewWidth is $imageViewWidth")
 
         val bmOptions = BitmapFactory.Options().apply {
             inJustDecodeBounds = true
@@ -75,8 +75,8 @@ class MainViewModel(private val app: Application) : AndroidViewModel(app) {
             val photoH = outHeight
             val photoW = outWidth
 
-            Log.i("MainActivity", "decodedHeight is $photoH")
-            Log.i("MainActivity", "decodedWidth is $photoW")
+            Log.i("CameraViewModel", "decodedHeight is $photoH")
+            Log.i("CameraViewModel", "decodedWidth is $photoW")
 
 
             val scaleFactor =
@@ -106,5 +106,4 @@ class MainViewModel(private val app: Application) : AndroidViewModel(app) {
     fun getGeocoder() = geoCoder
     fun getImagesRef() = imagesRef
     fun getCurrentPhotoPath() = currentPhotoPath
-
 }
