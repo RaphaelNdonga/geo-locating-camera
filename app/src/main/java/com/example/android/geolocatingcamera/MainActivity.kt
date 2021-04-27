@@ -1,11 +1,11 @@
 package com.example.android.geolocatingcamera
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.location.Geocoder
-import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
@@ -17,6 +17,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import com.example.android.geolocatingcamera.databinding.ActivityMainBinding
+import com.example.android.geolocatingcamera.util.DEPARTMENT_ID
+import com.example.android.geolocatingcamera.util.IS_ADMIN
+import com.example.android.geolocatingcamera.util.sharedPrefFile
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import java.io.File
@@ -31,10 +34,20 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
 
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var departmentId: String
+    private var isAdmin = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPreferences = getSharedPreferences(sharedPrefFile, Context.MODE_PRIVATE)
+        departmentId = sharedPreferences.getString(DEPARTMENT_ID, "")!!
+        isAdmin = sharedPreferences.getBoolean(IS_ADMIN, false)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
+
+        Toast.makeText(this, departmentId,Toast.LENGTH_LONG).show()
 
         setContentView(binding.root)
 
@@ -84,7 +97,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if(viewModel.location.value != null){
+        if (viewModel.location.value != null) {
             return
         }
         startLoading()
@@ -203,7 +216,7 @@ class MainActivity : AppCompatActivity() {
 
             val task = imagesRef.putFile(photoUri)
 
-            task.addOnFailureListener { exception->
+            task.addOnFailureListener { exception ->
                 Log.i("MainActivity", "$exception")
                 Toast.makeText(this, "Upload failed. Please try again", Toast.LENGTH_LONG)
                     .show()
@@ -235,11 +248,12 @@ class MainActivity : AppCompatActivity() {
         binding.loadingTxt.visibility = View.GONE
     }
 
-    private fun startLoadingImage(){
+    private fun startLoadingImage() {
         binding.imageProgressBar.visibility = View.VISIBLE
         binding.button.isClickable = false
     }
-    private fun stopLoadingImage(){
+
+    private fun stopLoadingImage() {
         binding.imageProgressBar.visibility = View.GONE
         binding.button.isClickable = true
     }
