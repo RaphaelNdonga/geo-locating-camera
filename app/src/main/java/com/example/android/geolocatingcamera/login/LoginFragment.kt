@@ -90,14 +90,6 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-        val user = auth.currentUser
-        if (user != null){
-            goToMainActivity()
-        }
-    }
-
     private fun goToMainActivity() {
         val intent = Intent(context, MainActivity::class.java)
         startActivity(intent)
