@@ -15,7 +15,9 @@ import com.example.android.geolocatingcamera.GeoLocatingData
 import com.example.android.geolocatingcamera.util.DEPARTMENT_ID
 import com.example.android.geolocatingcamera.util.sharedPrefFile
 import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.File
@@ -23,6 +25,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class CameraViewModel(private val app: Application) : AndroidViewModel(app) {
+    private val functions = Firebase.functions
     private val firestore = FirebaseFirestore.getInstance()
     private val firebaseStorage = Firebase.storage
     private var currentPhotoPath: String? = null
@@ -126,6 +129,14 @@ class CameraViewModel(private val app: Application) : AndroidViewModel(app) {
         val imagesDocument = departmentsCollection.document(geoLocatingData.id)
         imagesDocument.set(geoLocatingData).addOnFailureListener {
             Log.d("CameraViewModel",it.toString())
+        }.addOnSuccessListener {
+            Log.i("CameraViewModel","Sending message...")
+            sendMessageToAdmin(geoLocatingData.location)
         }
+    }
+
+    private fun sendMessageToAdmin(address:String): Task<Unit> {
+        val data = hashMapOf("address" to address, "departmentId" to departmentId)
+        return functions.getHttpsCallable("sendMessage").call(data).continueWith {  }
     }
 }
