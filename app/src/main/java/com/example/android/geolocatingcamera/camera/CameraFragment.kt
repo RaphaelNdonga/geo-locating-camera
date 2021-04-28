@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.IntentSender
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import android.provider.MediaStore
@@ -20,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.android.geolocatingcamera.GeoLocatingData
 import com.example.android.geolocatingcamera.util.*
 import com.example.android.geolocatingcamera.databinding.CameraFragmentBinding
 import com.example.android.geolocatingcamera.util.DEPARTMENT_ID
@@ -67,7 +67,7 @@ class CameraFragment : Fragment() {
                     val address = it[0].getAddressLine(0) ?: ""
 
                     val text = "Location: $address"
-                    binding.textView.text = text
+                    viewModel.setLocationAddress(text)
                 }
             } catch (ex: IOException) {
                 stopLoadingImage()
@@ -78,6 +78,10 @@ class CameraFragment : Fragment() {
                 ).show()
                 binding.textView.text = ""
             }
+        })
+
+        viewModel.locationAddress.observe(viewLifecycleOwner,{
+            binding.textView.text = it
         })
 
         binding.button.setOnClickListener {
@@ -244,11 +248,17 @@ class CameraFragment : Fragment() {
                     ).show()
                     return@continueWith
                 }
-                imagesRef.downloadUrl.addOnCompleteListener { thirdTask->
-                    if(task.isSuccessful){
+                imagesRef.downloadUrl.addOnCompleteListener { thirdTask ->
+                    if (task.isSuccessful) {
                         val downloadUri = thirdTask.result
-                        Log.i("CameraFragment","The download uri is $downloadUri")
-                    }else{
+                        Log.i("CameraFragment", "The download uri is $downloadUri")
+                        val geoLocatingData = GeoLocatingData(
+                            downloadUri = downloadUri.toString(),
+                            location = viewModel.locationAddress.value?:"",
+                            timeStamp = System.currentTimeMillis()
+                        )
+                        viewModel.addFirestoreData(geoLocatingData)
+                    } else {
                         Toast.makeText(
                             requireContext(),
                             "An error occurred while downloading the url",

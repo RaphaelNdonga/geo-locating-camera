@@ -1,6 +1,7 @@
 package com.example.android.geolocatingcamera.camera
 
 import android.app.Application
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Geocoder
@@ -10,8 +11,11 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.example.android.geolocatingcamera.GeoLocatingData
+import com.example.android.geolocatingcamera.util.DEPARTMENT_ID
+import com.example.android.geolocatingcamera.util.sharedPrefFile
 import com.google.android.gms.location.*
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import java.io.File
@@ -19,11 +23,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class CameraViewModel(private val app: Application) : AndroidViewModel(app) {
+    private val firestore = FirebaseFirestore.getInstance()
     private val firebaseStorage = Firebase.storage
     private var currentPhotoPath: String? = null
 
     private val _location = MutableLiveData<Location>()
     val location: LiveData<Location> = _location
+
+    private val _locationAddress = MutableLiveData<String>()
+    val locationAddress:LiveData<String> = _locationAddress
 
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
@@ -50,6 +58,9 @@ class CameraViewModel(private val app: Application) : AndroidViewModel(app) {
     private var geoCoder: Geocoder? = null
     private val fusedLocationProviderClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(app)
+
+    private val sharedPreferences = app.getSharedPreferences(sharedPrefFile, Context.MODE_PRIVATE)
+    private val departmentId = sharedPreferences.getString(DEPARTMENT_ID,"")!!
 
     fun createImageFile(): File {
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmSS").format(Date())
@@ -92,6 +103,9 @@ class CameraViewModel(private val app: Application) : AndroidViewModel(app) {
     fun setLocation(location: Location) {
         _location.value = location
     }
+    fun setLocationAddress(address:String){
+        _locationAddress.value = address
+    }
 
     fun getLocationCallback() = locationCallback
 
@@ -106,4 +120,12 @@ class CameraViewModel(private val app: Application) : AndroidViewModel(app) {
     fun createImagesRef(refName: String) = firebaseStorage.reference.child(refName)
 
     fun getCurrentPhotoPath() = currentPhotoPath
+
+    fun addFirestoreData(geoLocatingData: GeoLocatingData){
+        val departmentsCollection = firestore.collection(departmentId)
+        val imagesDocument = departmentsCollection.document(geoLocatingData.id)
+        imagesDocument.set(geoLocatingData).addOnFailureListener {
+            Log.d("CameraViewModel",it.toString())
+        }
+    }
 }
