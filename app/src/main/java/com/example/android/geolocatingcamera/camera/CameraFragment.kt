@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentSender
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import android.provider.MediaStore
@@ -234,6 +235,28 @@ class CameraFragment : Fragment() {
                 Toast.makeText(requireContext(), "Uploaded successfully", Toast.LENGTH_LONG)
                     .show()
                 stopLoadingImage()
+            }.continueWith { secondTask ->
+                if (!secondTask.isSuccessful) {
+                    Toast.makeText(
+                        requireContext(),
+                        "An error occurred while downloading the url",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    return@continueWith
+                }
+                imagesRef.downloadUrl.addOnCompleteListener { thirdTask->
+                    if(task.isSuccessful){
+                        val downloadUri = thirdTask.result
+                        Log.i("CameraFragment","The download uri is $downloadUri")
+                    }else{
+                        Toast.makeText(
+                            requireContext(),
+                            "An error occurred while downloading the url",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        return@addOnCompleteListener
+                    }
+                }
             }
         }
     }
