@@ -7,4 +7,8 @@
         android:id="@+id/cameraFragment"
         android:name="com.example.android.geolocatingcamera.camera.CameraFragment"
         android:label="CameraFragment" />
+    <fragment
+        android:id="@+id/imagesFragment"
+        android:name="com.example.android.geolocatingcamera.images.ImagesFragment"
+        android:label="ImagesFragment" />
 </navigation>

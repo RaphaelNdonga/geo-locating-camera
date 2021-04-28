@@ -18,9 +18,8 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CameraViewModel(private val app:Application): AndroidViewModel(app) {
+class CameraViewModel(private val app: Application) : AndroidViewModel(app) {
     private val firebaseStorage = Firebase.storage
-    private val imagesRef = firebaseStorage.reference.child("images")
     private var currentPhotoPath: String? = null
 
     private val _location = MutableLiveData<Location>()
@@ -98,12 +97,13 @@ class CameraViewModel(private val app:Application): AndroidViewModel(app) {
 
     fun getLocationRequest(): LocationRequest = locationRequest
 
-    fun initializeGeocoder(){
+    fun initializeGeocoder() {
         geoCoder = Geocoder(app)
     }
 
     fun getFusedLocationProviderClient() = fusedLocationProviderClient
     fun getGeocoder() = geoCoder
-    fun getImagesRef() = imagesRef
+    fun createImagesRef(refName: String) = firebaseStorage.reference.child(refName)
+
     fun getCurrentPhotoPath() = currentPhotoPath
 }

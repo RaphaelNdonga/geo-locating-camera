@@ -212,7 +212,7 @@ class CameraFragment : Fragment() {
                     "com.example.android.fileprovider",
                     file
                 )
-            val imagesRef = viewModel.getImagesRef().child(file.name)
+            val imagesRef = viewModel.createImagesRef(departmentId).child(file.name)
 
             startLoadingImage()
 
