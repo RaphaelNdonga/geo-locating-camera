@@ -13,4 +13,6 @@
     <string name="no_special_white_space">The department id cannot contain special characters or spaces</string>
     <string name="valid_email_request">Please enter a valid email address</string>
     <string name="password_requirement">The password has to be 8 characters or more</string>
+    <string name="channel_photo_alert_name">New Photo Alerts</string>
+    <string name="channel_photo_alert_id">channel_photo_alert</string>
 </resources>
