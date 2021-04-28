@@ -55,3 +55,29 @@ async function setCourseId(email:string, departmentId:string) {
     departmentId: departmentId,
   });
 }
+
+exports.sendMessage = functions.https.onCall((data, context)=>{
+  const address = data.address;
+  const topic = data.departmentId;
+
+  return sendMessage(address, topic);
+});
+
+/**
+ * Processing input params
+ * @param {string} address
+ * @param {string} topic
+ */
+async function sendMessage(address:string, topic:string) {
+  const data = {
+    data: {
+      address: address,
+    },
+    topic: topic,
+  };
+  return admin.messaging().send(data).then((response)=>{
+    functions.logger.info(`The data ${data} has been sent successfully`);
+  }).catch((error)=>{
+    functions.logger.error(`An error occurred ${error}`);
+  });
+}
