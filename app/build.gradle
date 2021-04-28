@@ -54,6 +54,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     //google play services location dependency
     implementation "com.google.android.gms:play-services-location:18.0.0"
+
     //firebase bom helps to manage firebase versions
     implementation platform('com.google.firebase:firebase-bom:27.1.0')
     //firebase cloud storage dependency
@@ -64,6 +65,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-functions-ktx'
     //firebase cloud firestore dependency
     implementation 'com.google.firebase:firebase-firestore'
+    //firebase cloud messaging dependencies. Crashlytics are essential
+    implementation 'com.google.firebase:firebase-messaging-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 
     //navigation dependency
     // Kotlin
