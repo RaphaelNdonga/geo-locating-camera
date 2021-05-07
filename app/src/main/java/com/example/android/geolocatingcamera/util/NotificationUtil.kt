@@ -14,7 +14,7 @@ const val NOTIFICATION_ID = 1
 fun NotificationManager.sendNotification(context: Context, message: String) {
 
     val mainIntent = Intent(context, MainActivity::class.java)
-    val pendingIntent = PendingIntent.getBroadcast(
+    val pendingIntent = PendingIntent.getActivity(
         context,
         REQUEST_CODE,
         mainIntent,
