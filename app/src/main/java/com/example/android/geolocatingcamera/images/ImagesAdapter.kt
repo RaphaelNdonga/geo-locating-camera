@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.example.android.geolocatingcamera.GeoLocatingData
 import com.example.android.geolocatingcamera.databinding.ImageItemBinding
 
-class ImagesAdapter :
+class ImagesAdapter(private val imagesListener: ImagesListener) :
     ListAdapter<GeoLocatingData, ImagesAdapter.ImagesViewHolder>(DiffUtilCallback) {
     object DiffUtilCallback : DiffUtil.ItemCallback<GeoLocatingData>() {
         override fun areItemsTheSame(oldItem: GeoLocatingData, newItem: GeoLocatingData): Boolean {
@@ -46,5 +46,12 @@ class ImagesAdapter :
     override fun onBindViewHolder(holder: ImagesViewHolder, position: Int) {
         val geoLocatingData = getItem(position)
         holder.bind(geoLocatingData)
+        holder.itemView.setOnClickListener {
+            imagesListener.onClick(geoLocatingData)
+        }
+    }
+
+    class ImagesListener(val onClickListener:(GeoLocatingData)->Unit){
+        fun onClick(geoLocatingData: GeoLocatingData) = onClickListener(geoLocatingData)
     }
 }
