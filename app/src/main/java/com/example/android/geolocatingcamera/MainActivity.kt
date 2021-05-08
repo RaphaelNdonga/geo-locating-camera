@@ -81,4 +81,11 @@ class MainActivity : AppCompatActivity() {
         val departmentId = sharedPreferences.getString(DEPARTMENT_ID,"")!!
         firebaseMessaging.subscribeToTopic(departmentId)
     }
+
+    override fun onBackPressed() {
+        if(navController.currentDestination?.id == R.id.cameraFragment){
+            super.onBackPressed()
+        }
+        navController.navigateUp()
+    }
 }
