@@ -15,10 +15,7 @@ import com.example.android.geolocatingcamera.MainActivity
 import com.example.android.geolocatingcamera.R
 import com.example.android.geolocatingcamera.UserType
 import com.example.android.geolocatingcamera.databinding.LoginFragmentBinding
-import com.example.android.geolocatingcamera.util.DEPARTMENT_ID
-import com.example.android.geolocatingcamera.util.IS_ADMIN
-import com.example.android.geolocatingcamera.util.isValidEmail
-import com.example.android.geolocatingcamera.util.sharedPrefFile
+import com.example.android.geolocatingcamera.util.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -47,9 +44,12 @@ class LoginFragment : Fragment() {
             requireActivity().getSharedPreferences(sharedPrefFile, Context.MODE_PRIVATE)
 
         auth = Firebase.auth
-        if (auth.currentUser != null) {
+        val departmentId = sharedPreferences.getString(DEPARTMENT_ID,"")!!
+        val emailAddress = sharedPreferences.getString(EMAIL_ADDRESS,"")!!
+        if (emailAddress.isNotEmpty() && departmentId.isNotEmpty()) {
             val intent = Intent(requireContext(), MainActivity::class.java)
             startActivity(intent)
+            requireActivity().finish()
         }
         binding = LoginFragmentBinding.inflate(layoutInflater)
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
@@ -111,6 +111,9 @@ class LoginFragment : Fragment() {
             }
             isAdmin?.let {
                 sharedPreferences.edit().putBoolean(IS_ADMIN, it).apply()
+            }
+            user.email?.let {
+                sharedPreferences.edit().putString(EMAIL_ADDRESS,it).apply()
             }
             goToMainActivity()
         }?.addOnFailureListener {
