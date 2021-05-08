@@ -76,16 +76,16 @@ class CameraFragment : Fragment() {
                     "The geocoder has not been initialized properly. Please check your internet connection",
                     Toast.LENGTH_LONG
                 ).show()
-                binding.textView.text = ""
+                binding.cameraLocation.text = ""
             }
         })
 
         viewModel.locationAddress.observe(viewLifecycleOwner,{
-            binding.textView.text = it
+            binding.cameraLocation.text = it
         })
 
         binding.button.setOnClickListener {
-            if (!binding.textView.text.isNullOrEmpty()) {
+            if (!binding.cameraLocation.text.isNullOrEmpty()) {
                 takePictureIntent()
             } else {
                 Toast.makeText(
@@ -272,7 +272,7 @@ class CameraFragment : Fragment() {
     }
 
     private fun startLoading() {
-        binding.textView.visibility = View.GONE
+        binding.cameraLocation.visibility = View.GONE
         binding.button.visibility = View.GONE
         binding.imageView.visibility = View.GONE
         binding.progressBar.visibility = View.VISIBLE
@@ -280,7 +280,7 @@ class CameraFragment : Fragment() {
     }
 
     private fun stopLoading() {
-        binding.textView.visibility = View.VISIBLE
+        binding.cameraLocation.visibility = View.VISIBLE
         binding.button.visibility = View.VISIBLE
         binding.imageView.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
