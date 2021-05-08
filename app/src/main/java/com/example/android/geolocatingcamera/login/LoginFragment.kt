@@ -47,6 +47,10 @@ class LoginFragment : Fragment() {
             requireActivity().getSharedPreferences(sharedPrefFile, Context.MODE_PRIVATE)
 
         auth = Firebase.auth
+        if (auth.currentUser != null) {
+            val intent = Intent(requireContext(), MainActivity::class.java)
+            startActivity(intent)
+        }
         binding = LoginFragmentBinding.inflate(layoutInflater)
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
