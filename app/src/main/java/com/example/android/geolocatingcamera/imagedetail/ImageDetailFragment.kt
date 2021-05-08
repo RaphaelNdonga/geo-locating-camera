@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.android.geolocatingcamera.R
 import com.example.android.geolocatingcamera.databinding.ImageDetailFragmentBinding
 import com.example.android.geolocatingcamera.util.formatTimestamp
@@ -36,7 +37,11 @@ class ImageDetailFragment : Fragment() {
             binding.timeStampDetail.text = formatTimestamp(geoLocatingData.timeStamp)
             val downloadUri =
                 geoLocatingData.downloadUri.toUri().buildUpon().scheme("https").build()
-            Glide.with(this).load(downloadUri).into(binding.imageDetail)
+            Glide.with(this).load(downloadUri).apply(
+                RequestOptions()
+                    .placeholder(R.drawable.loading_animation)
+                    .error(R.drawable.ic_connection_error)
+            ).into(binding.imageDetail)
         }
 
         return binding.root

@@ -7,7 +7,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.android.geolocatingcamera.GeoLocatingData
+import com.example.android.geolocatingcamera.R
 import com.example.android.geolocatingcamera.databinding.ImageItemBinding
 
 class ImagesAdapter(private val imagesListener: ImagesListener) :
@@ -33,7 +35,11 @@ class ImagesAdapter(private val imagesListener: ImagesListener) :
         fun bind(geoLocatingData: GeoLocatingData) {
             val downloadUri =
                 geoLocatingData.downloadUri.toUri().buildUpon().scheme("https").build()
-            Glide.with(itemView).load(downloadUri).into(binding.gridViewImage)
+            Glide.with(itemView).load(downloadUri).apply(
+                RequestOptions()
+                    .placeholder(R.drawable.loading_animation)
+                    .error(R.drawable.ic_broken_image)
+            ).into(binding.gridViewImage)
         }
     }
 
@@ -51,7 +57,7 @@ class ImagesAdapter(private val imagesListener: ImagesListener) :
         }
     }
 
-    class ImagesListener(val onClickListener:(GeoLocatingData)->Unit){
+    class ImagesListener(val onClickListener: (GeoLocatingData) -> Unit) {
         fun onClick(geoLocatingData: GeoLocatingData) = onClickListener(geoLocatingData)
     }
 }
