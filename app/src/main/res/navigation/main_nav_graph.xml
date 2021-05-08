@@ -28,4 +28,9 @@
             app:argType="com.example.android.geolocatingcamera.GeoLocatingData"
             app:nullable="true" />
     </fragment>
+    <fragment
+        android:id="@+id/accManagementFragment"
+        android:name="com.example.android.geolocatingcamera.accManagement.AccManagementFragment"
+        android:label="Account Management"
+        tools:layout="@layout/acc_management_fragment" />
 </navigation>

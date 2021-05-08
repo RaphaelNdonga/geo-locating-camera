@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".accManagement.AccManagementFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+
+        <TextView
+            android:id="@+id/acc_management_heading"
+            style="@style/TextAppearance.AppCompat.Headline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_margin"
+            android:text="Account Details:"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/email_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            android:text="email address"
+            app:layout_constraintStart_toStartOf="@+id/acc_management_heading"
+            app:layout_constraintTop_toBottomOf="@+id/acc_management_heading" />
+
+        <TextView
+            android:id="@+id/department_id_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            android:text="department id"
+            app:layout_constraintStart_toStartOf="@+id/email_detail"
+            app:layout_constraintTop_toBottomOf="@+id/email_detail" />
+
+        <TextView
+            android:id="@+id/isAdmin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            android:text="isAdmin"
+            app:layout_constraintStart_toStartOf="@+id/department_id_detail"
+            app:layout_constraintTop_toBottomOf="@+id/department_id_detail" />
+
+        <Button
+            android:id="@+id/log_out_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            android:text="Log out"
+            app:layout_constraintStart_toStartOf="@+id/isAdmin"
+            app:layout_constraintTop_toBottomOf="@+id/isAdmin" />
+
+        <Button
+            android:id="@+id/delete_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            android:text="Delete account"
+            app:layout_constraintStart_toStartOf="@+id/log_out_btn"
+            app:layout_constraintTop_toBottomOf="@+id/log_out_btn" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
