@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/main_nav_graph.xml"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph.xml"
     app:startDestination="@id/cameraFragment">
 
     <fragment
@@ -10,5 +12,20 @@
     <fragment
         android:id="@+id/imagesFragment"
         android:name="com.example.android.geolocatingcamera.images.ImagesFragment"
-        android:label="ImagesFragment" />
+        android:label="ImagesFragment" >
+        <action
+            android:id="@+id/action_imagesFragment_to_imageDetailFragment"
+            app:destination="@id/imageDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/imageDetailFragment"
+        android:name="com.example.android.geolocatingcamera.imagedetail.ImageDetailFragment"
+        android:label="image_detail_fragment"
+        tools:layout="@layout/image_detail_fragment" >
+        <argument
+            android:name="geoLocatingData"
+            app:argType="com.example.android.geolocatingcamera.GeoLocatingData"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
 </navigation>
