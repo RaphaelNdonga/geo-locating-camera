@@ -3,9 +3,12 @@ package com.example.android.geolocatingcamera.signup
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -18,6 +21,7 @@ import com.example.android.geolocatingcamera.util.isValidMessagingTopic
 import com.example.android.geolocatingcamera.util.isValidEmail
 import com.example.android.geolocatingcamera.util.sharedPrefFile
 import com.google.android.material.snackbar.Snackbar
+import java.util.*
 
 class SignUpFragment : Fragment() {
 
@@ -27,27 +31,19 @@ class SignUpFragment : Fragment() {
 
     private lateinit var viewModel: SignUpViewModel
     private lateinit var binding: SignUpFragmentBinding
-    private val arguments by navArgs<SignUpFragmentArgs>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = SignUpFragmentBinding.inflate(layoutInflater)
-        arguments.userType.let {
-            viewModel =
-                ViewModelProvider(this, SignUpViewModelFactory(it)).get(SignUpViewModel::class.java)
-            when (it) {
-                UserType.ADMIN -> {
-                    binding.signUpHeading.text =
-                        context?.getString(R.string.adminHeading)
 
-                }
+        val itemList = listOf<String>("Admin", "Regular")
 
-                UserType.REGULAR -> {
-                    binding.signUpHeading.text = context?.getString(R.string.regularHeading)
-                }
-            }
-        }
+        val adapter = ArrayAdapter(requireContext(), R.layout.user_type_list, itemList)
+
+        (binding.userTypeTextField.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+
+        viewModel = ViewModelProvider(this).get(SignUpViewModel::class.java)
 
         viewModel.snackBarText.observe(viewLifecycleOwner, EventObserver {
             Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
@@ -57,11 +53,12 @@ class SignUpFragment : Fragment() {
             findNavController().navigateUp()
         })
         binding.signUpBtn.setOnClickListener {
-            val departmentId = binding.signUpDepartmentId.text.toString()
-            val emailAddress = binding.signUpEmail.text.toString()
-            val password = binding.signUpPassword.text.toString()
+            val departmentId = binding.departmentIdEditTxt.text.toString()
+            val emailAddress = binding.emailEditTxt.text.toString()
+            val password = binding.passwordEditTxt.text.toString()
+            val userTypeString = binding.userTypeTextField.editText?.text.toString()
 
-            if (departmentId.isEmpty() || emailAddress.isEmpty() || password.isEmpty()) {
+            if (departmentId.isEmpty() || emailAddress.isEmpty() || password.isEmpty() || userTypeString.isEmpty()) {
                 Snackbar.make(
                     requireView(),
                     getString(R.string.fill_blanks),
@@ -93,8 +90,9 @@ class SignUpFragment : Fragment() {
                 ).show()
                 return@setOnClickListener
             }
+            val userTypeEnum = enumValueOf<UserType>(userTypeString.toUpperCase(Locale.ROOT))
 
-            viewModel.createUser(emailAddress, password, departmentId)
+            viewModel.createUser(emailAddress, password, userTypeEnum, departmentId)
 
         }
         return binding.root
