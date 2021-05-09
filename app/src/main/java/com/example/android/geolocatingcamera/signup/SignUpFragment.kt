@@ -1,9 +1,7 @@
 package com.example.android.geolocatingcamera.signup
 
-import android.content.Context
-import android.content.SharedPreferences
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,14 +10,13 @@ import android.widget.AutoCompleteTextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
+import com.example.android.geolocatingcamera.MainActivity
 import com.example.android.geolocatingcamera.R
 import com.example.android.geolocatingcamera.UserType
 import com.example.android.geolocatingcamera.databinding.SignUpFragmentBinding
 import com.example.android.geolocatingcamera.util.EventObserver
 import com.example.android.geolocatingcamera.util.isValidMessagingTopic
 import com.example.android.geolocatingcamera.util.isValidEmail
-import com.example.android.geolocatingcamera.util.sharedPrefFile
 import com.google.android.material.snackbar.Snackbar
 import java.util.*
 
@@ -43,13 +40,25 @@ class SignUpFragment : Fragment() {
 
         (binding.userTypeTextField.editText as? AutoCompleteTextView)?.setAdapter(adapter)
 
-        viewModel = ViewModelProvider(this).get(SignUpViewModel::class.java)
+        val app = requireActivity().application
+        viewModel =
+            ViewModelProvider(this, SignUpViewModelFactory(app)).get(SignUpViewModel::class.java)
 
         viewModel.snackBarText.observe(viewLifecycleOwner, EventObserver {
             Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
         })
 
-        viewModel.loginNavigator.observe(viewLifecycleOwner, EventObserver {
+        viewModel.mainNavigator.observe(viewLifecycleOwner, EventObserver {
+            val intent = Intent(requireContext(),MainActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
+        })
+
+        viewModel.stopLoading.observe(viewLifecycleOwner,EventObserver{
+            stopLoading()
+        })
+
+        viewModel.loginNavigator.observe(viewLifecycleOwner,EventObserver{
             findNavController().navigateUp()
         })
         binding.signUpBtn.setOnClickListener {
@@ -92,6 +101,7 @@ class SignUpFragment : Fragment() {
             }
             val userTypeEnum = enumValueOf<UserType>(userTypeString.toUpperCase(Locale.ROOT))
 
+            startLoading()
             viewModel.createUser(emailAddress, password, userTypeEnum, departmentId)
 
         }
@@ -101,7 +111,26 @@ class SignUpFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(SignUpViewModel::class.java)
-        // TODO: Use the ViewModel
+    }
+
+    private fun startLoading(){
+        binding.userTypeTextField.visibility = View.GONE
+        binding.signUpHeading.visibility = View.GONE
+        binding.signUpBtn.visibility = View.GONE
+        binding.emailTextField.visibility = View.GONE
+        binding.departmentIdTextField.visibility = View.GONE
+        binding.passwordTextField.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    private fun stopLoading(){
+        binding.userTypeTextField.visibility = View.VISIBLE
+        binding.signUpHeading.visibility = View.VISIBLE
+        binding.signUpBtn.visibility = View.VISIBLE
+        binding.emailTextField.visibility = View.VISIBLE
+        binding.departmentIdTextField.visibility = View.VISIBLE
+        binding.passwordTextField.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.GONE
     }
 
 }

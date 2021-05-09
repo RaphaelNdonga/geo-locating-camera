@@ -52,6 +52,7 @@ class AccManagementFragment : Fragment() {
 
         binding.logOutBtn.setOnClickListener {
             auth.signOut()
+            sharedPreferences.edit().clear().apply()
             val intent = Intent(requireContext(), LoginActivity::class.java)
             startActivity(intent)
             requireActivity().finish()
