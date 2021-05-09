@@ -13,12 +13,10 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.android.geolocatingcamera.MainActivity
 import com.example.android.geolocatingcamera.R
-import com.example.android.geolocatingcamera.UserType
 import com.example.android.geolocatingcamera.databinding.LoginFragmentBinding
 import com.example.android.geolocatingcamera.util.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -45,8 +43,7 @@ class LoginFragment : Fragment() {
 
         auth = Firebase.auth
         val departmentId = sharedPreferences.getString(DEPARTMENT_ID,"")!!
-        val emailAddress = sharedPreferences.getString(EMAIL_ADDRESS,"")!!
-        if (emailAddress.isNotEmpty() && departmentId.isNotEmpty()) {
+        if (auth.currentUser != null && departmentId.isNotEmpty()) {
             val intent = Intent(requireContext(), MainActivity::class.java)
             startActivity(intent)
             requireActivity().finish()
@@ -55,22 +52,11 @@ class LoginFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
 
-        val adminSignUp = binding.adminSignUpBtn
-        val regularSignUp = binding.regularSignUpBtn
+        val createAccBtn = binding.createAccBtn
 
-        adminSignUp.setOnClickListener {
+        createAccBtn.setOnClickListener {
             findNavController().navigate(
-                LoginFragmentDirections.actionLoginFragmentToSignUpFragment(
-                    UserType.ADMIN
-                )
-            )
-        }
-
-        regularSignUp.setOnClickListener {
-            findNavController().navigate(
-                LoginFragmentDirections.actionLoginFragmentToSignUpFragment(
-                    UserType.REGULAR
-                )
+                R.id.signUpFragment
             )
         }
 
