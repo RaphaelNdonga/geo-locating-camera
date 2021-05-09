@@ -11,7 +11,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.ktx.Firebase
 
-class SignUpViewModel(private val userType: UserType) : ViewModel() {
+class SignUpViewModel : ViewModel() {
     private val auth = Firebase.auth
     private val functions = FirebaseFunctions.getInstance()
 
@@ -21,7 +21,7 @@ class SignUpViewModel(private val userType: UserType) : ViewModel() {
     private val _loginNavigator = MutableLiveData<Event<Unit>>()
     val loginNavigator: LiveData<Event<Unit>> = _loginNavigator
 
-    fun createUser(email: String, password: String, departmentId: String) {
+    fun createUser(email: String, password: String,userType: UserType, departmentId: String) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 when(userType){
