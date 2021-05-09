@@ -51,6 +51,14 @@ class LoginFragment : Fragment() {
         binding = LoginFragmentBinding.inflate(layoutInflater)
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
+        viewModel.mainNavigator.observe(viewLifecycleOwner,EventObserver{
+            goToMainActivity()
+        })
+
+        viewModel.stopLoading.observe(viewLifecycleOwner,EventObserver{
+            stopLoading()
+        })
+
 
         val createAccBtn = binding.createAccBtn
 
@@ -68,13 +76,8 @@ class LoginFragment : Fragment() {
                 Snackbar.make(requireView(), R.string.fill_blanks, Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-
-            auth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
-                getIdToken()
-            }.addOnFailureListener {
-                val exception = it.message
-                Toast.makeText(context, exception, Toast.LENGTH_LONG).show()
-            }
+            startLoading()
+            viewModel.loginUser(email,password)
         }
 
         return binding.root
@@ -86,25 +89,26 @@ class LoginFragment : Fragment() {
         requireActivity().finish()
     }
 
-    private fun getIdToken() {
-        val user = auth.currentUser
-        user?.getIdToken(false)?.addOnSuccessListener { result ->
-            val isAdmin = result.claims["admin"] as Boolean?
-            val departmentId = result.claims["departmentId"] as String?
+    private fun startLoading(){
+        binding.appLogo.visibility = View.GONE
+        binding.appName.visibility = View.GONE
+        binding.emailTextField.visibility = View.GONE
+        binding.passwordTextField.visibility = View.GONE
+        binding.createAccBtn.visibility = View.GONE
+        binding.signUpTxt.visibility = View.GONE
+        binding.loginBtn.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+    }
 
-            departmentId?.let {
-                sharedPreferences.edit().putString(DEPARTMENT_ID, it).apply()
-            }
-            isAdmin?.let {
-                sharedPreferences.edit().putBoolean(IS_ADMIN, it).apply()
-            }
-            user.email?.let {
-                sharedPreferences.edit().putString(EMAIL_ADDRESS,it).apply()
-            }
-            goToMainActivity()
-        }?.addOnFailureListener {
-            Toast.makeText(context, it.message, Toast.LENGTH_LONG).show()
-        }
+    private fun stopLoading(){
+        binding.appLogo.visibility = View.VISIBLE
+        binding.appName.visibility = View.VISIBLE
+        binding.emailTextField.visibility = View.VISIBLE
+        binding.passwordTextField.visibility = View.VISIBLE
+        binding.createAccBtn.visibility = View.VISIBLE
+        binding.signUpTxt.visibility = View.VISIBLE
+        binding.loginBtn.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.GONE
     }
 
 }
