@@ -74,6 +74,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/edit_txt_margin"
         android:hint="@string/password_hint"
+        app:endIconMode="password_toggle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/department_id_text_field">
 
