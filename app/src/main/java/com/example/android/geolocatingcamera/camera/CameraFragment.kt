@@ -49,8 +49,6 @@ class CameraFragment : Fragment() {
         departmentId = sharedPreferences.getString(DEPARTMENT_ID, "")!!
         isAdmin = sharedPreferences.getBoolean(IS_ADMIN, false)
 
-        Toast.makeText(requireContext(), departmentId, Toast.LENGTH_LONG).show()
-
         val app = requireActivity().application
         viewModel =
             ViewModelProvider(this, CameraViewModelFactory(app)).get(CameraViewModel::class.java)
