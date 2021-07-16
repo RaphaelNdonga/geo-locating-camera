@@ -140,7 +140,6 @@ class CameraFragment : Fragment() {
         if (requestCode == REQUEST_LOCATION_PERMISSION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             startLocationUpdates()
         }
-
     }
 
     private fun takePictureIntent() {
