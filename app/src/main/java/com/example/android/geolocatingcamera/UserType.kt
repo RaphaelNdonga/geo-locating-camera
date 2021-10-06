@@ -1,7 +1,7 @@
 package com.example.android.geolocatingcamera
 
 import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 enum class UserType : Parcelable {
