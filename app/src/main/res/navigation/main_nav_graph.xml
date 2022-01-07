@@ -7,11 +7,11 @@
 
     <fragment
         android:id="@+id/cameraFragment"
-        android:name="com.example.android.geolocatingcamera.camera.CameraFragment"
+        android:name="com.raphael.android.geolocatingcamera.camera.CameraFragment"
         android:label="Take a photo" />
     <fragment
         android:id="@+id/imagesFragment"
-        android:name="com.example.android.geolocatingcamera.images.ImagesFragment"
+        android:name="com.raphael.android.geolocatingcamera.images.ImagesFragment"
         android:label="Images">
         <action
             android:id="@+id/action_imagesFragment_to_imageDetailFragment"
@@ -19,18 +19,18 @@
     </fragment>
     <fragment
         android:id="@+id/imageDetailFragment"
-        android:name="com.example.android.geolocatingcamera.imagedetail.ImageDetailFragment"
+        android:name="com.raphael.android.geolocatingcamera.imagedetail.ImageDetailFragment"
         android:label="Image detail"
         tools:layout="@layout/image_detail_fragment">
         <argument
             android:name="geoLocatingData"
             android:defaultValue="@null"
-            app:argType="com.example.android.geolocatingcamera.GeoLocatingData"
+            app:argType="com.raphael.android.geolocatingcamera.GeoLocatingData"
             app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/accManagementFragment"
-        android:name="com.example.android.geolocatingcamera.accManagement.AccManagementFragment"
+        android:name="com.raphael.android.geolocatingcamera.accManagement.AccManagementFragment"
         android:label="Account Management"
         tools:layout="@layout/acc_management_fragment" />
 </navigation>

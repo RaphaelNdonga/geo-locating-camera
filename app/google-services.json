@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:252442963861:android:43d546fe25a6c838d9d09c",
         "android_client_info": {
-          "package_name": "com.example.android.geolocatingcamera"
+          "package_name": "com.raphael.android.geolocatingcamera"
         }
       },
       "oauth_client": [
