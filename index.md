@@ -1,4 +1,4 @@
-# My Campus App Privacy Policy
+# Geo locating camera App Privacy Policy
 We may collect your data directly from you. For example, when you sign in, you directly give us your email address.
 No data is obtained without your explicit permission.
 We use your data only for the correctly operation of this application. 
